@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyanCalc — HEMCO · Mineros</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde-oscuro:  #00493C;
+    --verde-medio:   #23CF7D;
+    --verde-limon:   #76C810;
+    --verde-claro:   #CCF895;
+    --crema:         #F5F0E8;
+    --blanco:        #FFFFFF;
+    --gris-txt:      #4A5568;
+    --gris-borde:    #D1D9CC;
+    --alerta:        #E53E3E;
+    --alerta-bg:     #FFF5F5;
+    --ok-bg:         #F0FBF4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sora', Verdana, Arial, sans-serif;
+    background: var(--crema);
+    color: var(--verde-oscuro);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ────────────────────────────────────── */
+  header {
+    background: var(--verde-oscuro);
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .header-text { flex: 1; }
+
+  .header-text .brand {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--blanco);
+    letter-spacing: -0.3px;
+  }
+
+  .header-text .subtitle {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--verde-claro);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .badge {
+    background: var(--verde-limon);
+    color: var(--verde-oscuro);
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* ── MAIN ───────────────────────────────────────── */
+  main { padding: 20px 16px 40px; max-width: 560px; margin: 0 auto; }
+
+  /* ── MODULE CARD ───────────────────────────────── */
+  .module {
+    background: var(--blanco);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,73,60,0.08);
+  }
+
+  .module-header {
+    background: var(--verde-oscuro);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .module-num {
+    width: 28px; height: 28px;
+    background: var(--verde-limon);
+    color: var(--verde-oscuro);
+    font-size: 14px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .module-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blanco);
+    line-height: 1.2;
+  }
+
+  .module-title span {
+    display: block;
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--verde-claro);
+    margin-top: 1px;
+    letter-spacing: 0.3px;
+  }
+
+  .module-body { padding: 18px; }
+
+  /* ── FORM ───────────────────────────────────────── */
+  .field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .field-group.full { grid-template-columns: 1fr; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gris-txt);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid var(--gris-borde);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .input-wrap:focus-within {
+    border-color: var(--verde-medio);
+  }
+
+  input[type="number"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px 10px;
+    font-family: 'Sora', Verdana, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--verde-oscuro);
+    background: transparent;
+    width: 100%;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .unit {
+    padding: 0 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gris-txt);
+    background: var(--crema);
+    border-left: 1.5px solid var(--gris-borde);
+    height: 100%;
+    display: flex; align-items: center;
+    white-space: nowrap;
+  }
+
+  /* ── INHERITED FIELD ────────────────────────────── */
+  .inherited-row {
+    background: var(--ok-bg);
+    border: 1.5px dashed var(--verde-medio);
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .inherited-row .ic {
+    width: 22px; height: 22px;
+    background: var(--verde-medio);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .inherited-row .ic svg { width: 12px; fill: white; }
+
+  .inherited-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gris-txt);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .inherited-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--verde-oscuro);
+  }
+
+  .inherited-note {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--verde-medio);
+    margin-top: 1px;
+  }
+
+  /* ── BUTTON ─────────────────────────────────────── */
+  .btn-calc {
+    width: 100%;
+    background: var(--verde-oscuro);
+    color: var(--blanco);
+    border: none;
+    border-radius: 3px;
+    padding: 13px;
+    font-family: 'Sora', Verdana, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn-calc:active { transform: scale(0.99); }
+
+  .btn-calc:hover { background: #005a4a; }
+
+  /* ── RESULT PANEL ───────────────────────────────── */
+  .result-panel {
+    margin-top: 16px;
+    display: none;
+  }
+
+  .result-panel.visible { display: block; }
+
+  .result-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .result-divider::before,
+  .result-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gris-borde);
+  }
+
+  .result-divider span {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gris-txt);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .result-card {
+    background: var(--crema);
+    border-radius: 3px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--verde-limon);
+  }
+
+  .result-card.highlight {
+    background: var(--verde-oscuro);
+    border-left: 3px solid var(--verde-limon);
+    grid-column: 1 / -1;
+  }
+
+  .result-card .rc-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gris-txt);
+    margin-bottom: 4px;
+  }
+
+  .result-card.highlight .rc-label { color: var(--verde-claro); }
+
+  .result-card .rc-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--verde-oscuro);
+    line-height: 1;
+  }
+
+  .result-card.highlight .rc-value {
+    color: var(--verde-limon);
+    font-size: 28px;
+  }
+
+  .result-card .rc-unit {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--gris-txt);
+    margin-top: 2px;
+  }
+
+  .result-card.highlight .rc-unit { color: var(--verde-claro); }
+
+  /* ── ALERT ─────────────────────────────────────── */
+  .alert {
+    background: var(--alerta-bg);
+    border: 1.5px solid var(--alerta);
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--alerta);
+    font-weight: 600;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .alert.visible { display: block; }
+
+  /* ── DEFICIT PANEL ──────────────────────────────── */
+  .deficit-note {
+    background: #FFFBEB;
+    border-left: 3px solid #F6AD55;
+    border-radius: 3px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #7B341E;
+    font-weight: 600;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .deficit-note.visible { display: block; }
+
+  /* ── STEP TRACE ─────────────────────────────────── */
+  details {
+    margin-top: 12px;
+  }
+
+  summary {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--verde-medio);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  summary::before {
+    content: '▶';
+    font-size: 9px;
+    transition: transform 0.15s;
+  }
+
+  details[open] summary::before { transform: rotate(90deg); }
+
+  .trace-box {
+    background: var(--crema);
+    border-radius: 3px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--gris-txt);
+    line-height: 1.8;
+  }
+
+  .trace-box .step { display: block; }
+  .trace-box .step strong { color: var(--verde-oscuro); }
+
+  /* ── FOOTER ─────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--gris-txt);
+    letter-spacing: 0.3px;
+  }
+
+  footer strong { font-weight: 700; color: var(--verde-oscuro); }
+
+  /* ── MOBILE FINE-TUNE ───────────────────────────── */
+  @media (max-width: 360px) {
+    .field-group { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr; }
+    .result-card.highlight { grid-column: auto; }
+  }
+
+  /* ── TABS ───────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    background: var(--verde-oscuro);
+    padding: 0 16px;
+    gap: 4px;
+    border-bottom: 3px solid rgba(255,255,255,0.08);
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Sora', Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 13px 8px 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: color 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .tab-btn svg { width: 14px; height: 14px; opacity: 0.6; transition: opacity 0.15s; }
+
+  .tab-btn.active {
+    color: var(--blanco);
+    border-bottom-color: var(--verde-limon);
+  }
+
+  .tab-btn.active svg { opacity: 1; }
+
+  .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.8); }
+
+  .tab-page { display: none; }
+  .tab-page.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <!-- Dandelion SVG aproximado al ícono de Mineros -->
+  <svg class="logo-mark" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="19" cy="22" r="4" fill="#76C810"/>
+    <line x1="19" y1="18" x2="19" y2="6"  stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="8"  y2="12" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="30" y2="12" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="6"  y2="20" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="32" y2="20" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="11" y2="28" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="27" y2="28" stroke="#76C810" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="19" cy="5"  r="2" fill="#76C810"/>
+    <circle cx="7"  cy="11" r="2" fill="#76C810"/>
+    <circle cx="31" cy="11" r="2" fill="#76C810"/>
+    <circle cx="5"  cy="20" r="2" fill="#76C810"/>
+    <circle cx="33" cy="20" r="2" fill="#76C810"/>
+    <circle cx="10" cy="29" r="2" fill="#76C810"/>
+    <circle cx="28" cy="29" r="2" fill="#76C810"/>
+  </svg>
+  <div class="header-text">
+    <div class="brand">CyanCalc</div>
+    <div class="subtitle">Calculadoras de proceso · HEMCO Nicaragua</div>
+  </div>
+  <div class="badge">v1.1</div>
+</header>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <button class="tab-btn active" id="tabBtnLix" onclick="switchTab('lix')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v5.5L4.5 18a2 2 0 0 0 1.8 3h11.4a2 2 0 0 0 1.8-3L14 8.5V3"/></svg>
+    Lixiviación
+  </button>
+  <button class="tab-btn" id="tabBtnFlot" onclick="switchTab('flot')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg>
+    Flotación
+  </button>
+</div>
+
+<main>
+
+<div class="tab-page active" id="pageLix">
+  <!-- ══════════════════════════════════════════════
+       MÓDULO 1 — PREPARACIÓN
+  ═══════════════════════════════════════════════ -->
+  <div class="module" id="mod1">
+    <div class="module-header">
+      <div class="module-num">1</div>
+      <div class="module-title">
+        Preparación inicial
+        <span>Calcula la masa de NaCN a pesar</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+
+      <div class="field-group">
+        <div class="field">
+          <label>Masa mineral</label>
+          <div class="input-wrap">
+            <input type="number" id="m1_masa" min="0" step="any" placeholder="200">
+            <span class="unit">g</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>% Sólidos</label>
+          <div class="input-wrap">
+            <input type="number" id="m1_solidos" min="1" max="99" step="any" placeholder="66">
+            <span class="unit">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Concentración objetivo</label>
+          <div class="input-wrap">
+            <input type="number" id="m1_ppm" min="0" step="any" placeholder="15000">
+            <span class="unit">ppm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Pureza NaCN</label>
+          <div class="input-wrap">
+            <input type="number" id="m1_pureza" min="1" max="100" step="any" placeholder="98">
+            <span class="unit">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert" id="m1_alert">Complete todos los campos con valores válidos.</div>
+
+      <button class="btn-calc" onclick="calcMod1()">Calcular preparación</button>
+
+      <!-- Resultado módulo 1 -->
+      <div class="result-panel" id="m1_result">
+        <div class="result-divider"><span>Resultados</span></div>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="rc-label">Pulpa total</div>
+            <div class="rc-value" id="r1_pulpa">—</div>
+            <div class="rc-unit">gramos</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Volumen solución</div>
+            <div class="rc-value" id="r1_vol">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+          <div class="result-card highlight">
+            <div class="rc-label">NaCN a pesar</div>
+            <div class="rc-value" id="r1_nacn">—</div>
+            <div class="rc-unit">g de NaCN técnico (<span id="r1_pureza_tag">—</span>% pureza)</div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Ver cálculo paso a paso</summary>
+          <div class="trace-box" id="m1_trace"></div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MÓDULO 2 — TITULACIÓN / REPOSICIÓN
+  ═══════════════════════════════════════════════ -->
+  <div class="module" id="mod2">
+    <div class="module-header">
+      <div class="module-num">2</div>
+      <div class="module-title">
+        Titulación &amp; Reposición
+        <span>Concentración actual y NaCN a reponer</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+
+      <!-- Volumen heredado -->
+      <div class="inherited-row" id="m2_inherited_row" style="display:none">
+        <div class="ic">
+          <svg viewBox="0 0 12 12"><path d="M1 7l3.5 3.5L11 2"/></svg>
+        </div>
+        <div>
+          <div class="inherited-label">Volumen solución</div>
+          <div class="inherited-value" id="m2_vol_display">— mL</div>
+          <div class="inherited-note">Heredado del Módulo 1</div>
+        </div>
+      </div>
+
+      <!-- Volumen manual (si M1 no fue calculado) -->
+      <div id="m2_vol_manual_wrap">
+        <div class="field-group full" style="margin-bottom:12px">
+          <div class="field">
+            <label>Volumen solución (manual)</label>
+            <div class="input-wrap">
+              <input type="number" id="m2_vol_manual" min="0" step="any" placeholder="103">
+              <span class="unit">mL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Volumen alícuota</label>
+          <div class="input-wrap">
+            <input type="number" id="m2_alicuota" min="0" step="any" placeholder="5">
+            <span class="unit">mL</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Vol. AgNO₃ gastado</label>
+          <div class="input-wrap">
+            <input type="number" id="m2_agno3_vol" min="0" step="any" placeholder="3">
+            <span class="unit">mL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Normalidad AgNO₃</label>
+          <div class="input-wrap">
+            <input type="number" id="m2_agno3_n" min="0" step="any" placeholder="0.01">
+            <span class="unit">N</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PPM heredado -->
+      <div class="inherited-row" id="m2_inherited_ppm_row" style="display:none">
+        <div class="ic">
+          <svg viewBox="0 0 12 12"><path d="M1 7l3.5 3.5L11 2"/></svg>
+        </div>
+        <div>
+          <div class="inherited-label">Concentración objetivo</div>
+          <div class="inherited-value" id="m2_ppm_display">— ppm</div>
+          <div class="inherited-note">Heredado del Módulo 1</div>
+        </div>
+      </div>
+      <div id="m2_ppm_manual_wrap">
+        <div class="field-group full" style="margin-bottom:12px">
+          <div class="field">
+            <label>Concentración objetivo</label>
+            <div class="input-wrap">
+              <input type="number" id="m2_ppm_obj" min="0" step="any" placeholder="15000">
+              <span class="unit">ppm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pureza heredada -->
+      <div class="inherited-row" id="m2_inherited_pur_row" style="display:none">
+        <div class="ic">
+          <svg viewBox="0 0 12 12"><path d="M1 7l3.5 3.5L11 2"/></svg>
+        </div>
+        <div>
+          <div class="inherited-label">Pureza NaCN</div>
+          <div class="inherited-value" id="m2_pureza_display">— %</div>
+          <div class="inherited-note">Heredado del Módulo 1</div>
+        </div>
+      </div>
+      <div id="m2_pureza_manual_wrap">
+        <div class="field-group full" style="margin-bottom:12px">
+          <div class="field">
+            <label>Pureza NaCN</label>
+            <div class="input-wrap">
+              <input type="number" id="m2_pureza" min="1" max="100" step="any" placeholder="98">
+              <span class="unit">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert" id="m2_alert">Complete todos los campos con valores válidos.</div>
+
+      <button class="btn-calc" onclick="calcMod2()">Calcular reposición</button>
+
+      <!-- Resultado módulo 2 -->
+      <div class="result-panel" id="m2_result">
+        <div class="result-divider"><span>Resultados</span></div>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="rc-label">CN⁻ en botella</div>
+            <div class="rc-value" id="r2_actual">—</div>
+            <div class="rc-unit">ppm CN⁻</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Déficit</div>
+            <div class="rc-value" id="r2_deficit">—</div>
+            <div class="rc-unit">ppm a reponer</div>
+          </div>
+          <div class="result-card highlight">
+            <div class="rc-label">NaCN a agregar</div>
+            <div class="rc-value" id="r2_nacn">—</div>
+            <div class="rc-unit">g de NaCN técnico (<span id="r2_pureza_tag">—</span>% pureza)</div>
+          </div>
+        </div>
+
+        <div class="deficit-note" id="m2_ok_note">
+          ✔ Concentración actual ≥ objetivo. No es necesario reponer NaCN.
+        </div>
+
+        <details>
+          <summary>Ver cálculo paso a paso</summary>
+          <div class="trace-box" id="m2_trace"></div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MÓDULO 3 — CÁLCULO FLOTACIÓN
+  ═══════════════════════════════════════════════ -->
+  </div><!-- /pageLix -->
+
+  <div class="tab-page" id="pageFlot">
+
+  <div class="module" id="mod3">
+    <div class="module-header">
+      <div class="module-num">3</div>
+      <div class="module-title">
+        Cálculo Flotación
+        <span>Reactivos según peso húmedo de torta</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Peso húmedo de la torta</label>
+          <div class="input-wrap">
+            <input type="number" id="m3_torta" min="0" step="any" placeholder="200">
+            <span class="unit">g</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trace-box" style="margin-top:0; margin-bottom:14px;">
+        <span class="step"><strong>Base de referencia (fija):</strong></span>
+        <span class="step">200 g mineral · 50% sólidos · H2O2 20 mL · NaCN 10 g · Leachwell 4 g</span>
+      </div>
+
+      <div class="alert" id="m3_alert">Ingrese el peso húmedo de la torta.</div>
+
+      <button class="btn-calc" onclick="calcMod3()">Calcular reactivos</button>
+
+      <!-- Resultado módulo 3 -->
+      <div class="result-panel" id="m3_result">
+        <div class="result-divider"><span>Resultados</span></div>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="rc-label">Agua a agregar</div>
+            <div class="rc-value" id="r3_agua">—</div>
+            <div class="rc-unit">mL (neta, tras restar H2O2)</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">H2O2</div>
+            <div class="rc-value" id="r3_h2o2">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">NaCN</div>
+            <div class="rc-value" id="r3_nacn">—</div>
+            <div class="rc-unit">gramos</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Leachwell</div>
+            <div class="rc-value" id="r3_leachwell">—</div>
+            <div class="rc-unit">gramos</div>
+          </div>
+        </div>
+
+        <div class="deficit-note visible" style="background:#F0FBF4; border-left-color:var(--verde-medio); color:var(--verde-oscuro);">
+          pH — ajustar con NaOH hasta pH +12 (por titulación, sin cantidad fija).
+        </div>
+
+        <details>
+          <summary>Ver cálculo paso a paso</summary>
+          <div class="trace-box" id="m3_trace"></div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MÓDULO 4 — FLOTACIÓN BULK (COLA GRAVIMÉTRICA)
+  ═══════════════════════════════════════════════ -->
+  <div class="module" id="mod4">
+    <div class="module-header">
+      <div class="module-num">4</div>
+      <div class="module-title">
+        Flotación Bulk — Cola gravimétrica
+        <span>Agua y reactivos Rougher/Scavenger según peso de MX</span>
+      </div>
+    </div>
+
+    <div class="module-body">
+
+      <div class="field-group full">
+        <div class="field">
+          <label>Peso de muestra (MX, cola gravimétrica)</label>
+          <div class="input-wrap">
+            <input type="number" id="m4_masa" min="0" step="any" placeholder="2000">
+            <span class="unit">g</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="trace-box" style="margin-top:0; margin-bottom:14px;">
+        <span class="step"><strong>Base de referencia (fija, según bitácora):</strong></span>
+        <span class="step">2000 g MX · 30% sólidos</span>
+        <span class="step">Rougher 1: CuSO4 8 mL · Xantato 4 mL · A-404 5 gotas · A-65 8 gotas</span>
+        <span class="step">Rougher 2: Xantato 4 mL · A-404 5 gotas · A-65 4 gotas</span>
+        <span class="step">Scavenger 1: A-65 4 gotas</span>
+      </div>
+
+      <div class="alert" id="m4_alert">Ingrese un peso de muestra mayor a cero.</div>
+
+      <button class="btn-calc" onclick="calcMod4()">Calcular agua y reactivos</button>
+
+      <!-- Resultado módulo 4 -->
+      <div class="result-panel" id="m4_result">
+        <div class="result-divider"><span>Agua (30% sólidos)</span></div>
+        <div class="results-grid" style="margin-bottom:16px;">
+          <div class="result-card highlight" style="grid-column:1/-1;">
+            <div class="rc-label">Agua a agregar</div>
+            <div class="rc-value" id="r4_agua">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+        </div>
+
+        <div class="result-divider"><span>Rougher 1 · pH 8–9</span></div>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="rc-label">CuSO4</div>
+            <div class="rc-value" id="r4_r1_cuso4">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Xantato</div>
+            <div class="rc-value" id="r4_r1_xantato">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">A-404</div>
+            <div class="rc-value" id="r4_r1_a404">—</div>
+            <div class="rc-unit">gotas</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">A-65</div>
+            <div class="rc-value" id="r4_r1_a65">—</div>
+            <div class="rc-unit">gotas</div>
+          </div>
+        </div>
+
+        <div class="result-divider" style="margin-top:16px;"><span>Rougher 2 · pH 8–9</span></div>
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="rc-label">Xantato</div>
+            <div class="rc-value" id="r4_r2_xantato">—</div>
+            <div class="rc-unit">mL</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">A-404</div>
+            <div class="rc-value" id="r4_r2_a404">—</div>
+            <div class="rc-unit">gotas</div>
+          </div>
+          <div class="result-card" style="grid-column:1/-1;">
+            <div class="rc-label">A-65</div>
+            <div class="rc-value" id="r4_r2_a65">—</div>
+            <div class="rc-unit">gotas</div>
+          </div>
+        </div>
+
+        <div class="result-divider" style="margin-top:16px;"><span>Scavenger 1 · pH 8–9</span></div>
+        <div class="results-grid">
+          <div class="result-card highlight" style="grid-column:1/-1;">
+            <div class="rc-label">A-65</div>
+            <div class="rc-value" id="r4_sc_a65">—</div>
+            <div class="rc-unit">gotas</div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Ver cálculo paso a paso</summary>
+          <div class="trace-box" id="m4_trace"></div>
+        </details>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- /pageFlot -->
+
+</main>
+
+<footer>
+  <strong>©2025 HEMCO Nicaragua S.A. · Mineros</strong><br>
+  Herramienta interna — Dpto. Control de Calidad y Procesos
+</footer>
+
+<script>
+  // ─── Estado global ────────────────────────────────
+  let volSolucionM1 = null; // mL
+  let ppmObjM1      = null; // ppm objetivo
+  let purezaM1      = null; // % pureza NaCN
+
+  // ─── UTILIDADES ──────────────────────────────────
+  function fmt(num, dec = 2) {
+    return parseFloat(num.toFixed(dec)).toLocaleString('es-NI', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+
+  function getVal(id) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) || v <= 0 ? null : v;
+  }
+
+  function showAlert(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+
+  function hideAlert(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+
+  // ─── MÓDULO 1 ────────────────────────────────────
+  function calcMod1() {
+    hideAlert('m1_alert');
+
+    const masa    = getVal('m1_masa');
+    const solidos = getVal('m1_solidos');
+    const ppm     = getVal('m1_ppm');
+    const pureza  = getVal('m1_pureza');
+
+    if (!masa || !solidos || !ppm || !pureza) {
+      showAlert('m1_alert', 'Complete todos los campos con valores mayores a cero.');
+      return;
+    }
+    if (solidos >= 100) {
+      showAlert('m1_alert', '% Sólidos debe ser menor a 100.');
+      return;
+    }
+    if (pureza > 100) {
+      showAlert('m1_alert', 'Pureza no puede superar 100%.');
+      return;
+    }
+
+    // ── Cálculo ──────────────────────────────────
+    const fracSolidos  = solidos / 100;
+    const pulpaTotal   = masa / fracSolidos;            // g
+    const volSol       = pulpaTotal - masa;              // mL (ρ agua = 1)
+    const volSolL      = volSol / 1000;                 // L
+    const grCN         = (ppm * volSolL) / 1000;        // ppm = mg/L → mg = ppm × L → g = /1000
+    // ppm = mg/L  →  g/L = ppm/1000  →  g CN- = (ppm/1000) * volSolL * 1000 = ppm * volSolL   ✓
+    const grNaCNpuro   = grCN * (49 / 26);              // PM NaCN=49, PM CN-=26
+    const grNaCNtec    = grNaCNpuro / (pureza / 100);
+
+    // ── Guardar para M2 ──────────────────────────
+    volSolucionM1 = volSol;
+    ppmObjM1      = ppm;
+    purezaM1      = pureza;
+    updateM2Inherited();
+
+    // ── Mostrar resultados ───────────────────────
+    document.getElementById('r1_pulpa').textContent   = fmt(pulpaTotal, 1);
+    document.getElementById('r1_vol').textContent     = fmt(volSol, 1);
+    document.getElementById('r1_nacn').textContent    = fmt(grNaCNtec, 2);
+    document.getElementById('r1_pureza_tag').textContent = pureza;
+
+    // ── Traza ────────────────────────────────────
+    const trace = document.getElementById('m1_trace');
+    trace.innerHTML = `
+      <span class="step"><strong>Paso 1 — Volumen de solución</strong></span>
+      <span class="step">Pulpa total = ${fmt(masa,1)} g ÷ ${fracSolidos} = ${fmt(pulpaTotal,2)} g</span>
+      <span class="step">Volución solución = ${fmt(pulpaTotal,2)} − ${fmt(masa,1)} = <strong>${fmt(volSol,2)} mL</strong></span>
+      <br>
+      <span class="step"><strong>Paso 2 — Gramos de CN⁻ requeridos</strong></span>
+      <span class="step">${fmt(ppm,0)} ppm × ${fmt(volSolL,5)} L = <strong>${fmt(grCN,4)} g CN⁻</strong></span>
+      <br>
+      <span class="step"><strong>Paso 3 — Conversión a NaCN puro (PM 49 / PM CN⁻ 26)</strong></span>
+      <span class="step">${fmt(grCN,4)} × (49/26) = <strong>${fmt(grNaCNpuro,4)} g NaCN puro</strong></span>
+      <br>
+      <span class="step"><strong>Paso 4 — Ajuste por pureza (${pureza}%)</strong></span>
+      <span class="step">${fmt(grNaCNpuro,4)} ÷ ${fracSolidos < 1 ? (pureza/100).toFixed(2) : ''} ${(pureza/100).toFixed(2)} = <strong>${fmt(grNaCNtec,3)} g NaCN técnico</strong></span>
+    `;
+
+    document.getElementById('m1_result').classList.add('visible');
+  }
+
+  // ─── MÓDULO 2 ────────────────────────────────────
+  function updateM2Inherited() {
+    const row     = document.getElementById('m2_inherited_row');
+    const manWrap = document.getElementById('m2_vol_manual_wrap');
+    const display = document.getElementById('m2_vol_display');
+
+    const rowPpm    = document.getElementById('m2_inherited_ppm_row');
+    const manPpm    = document.getElementById('m2_ppm_manual_wrap');
+    const dispPpm   = document.getElementById('m2_ppm_display');
+
+    const rowPur    = document.getElementById('m2_inherited_pur_row');
+    const manPur    = document.getElementById('m2_pureza_manual_wrap');
+    const dispPur   = document.getElementById('m2_pureza_display');
+
+    if (volSolucionM1 !== null) {
+      display.textContent = fmt(volSolucionM1, 1) + ' mL';
+      row.style.display = 'flex';
+      manWrap.style.display = 'none';
+    } else {
+      row.style.display = 'none';
+      manWrap.style.display = 'block';
+    }
+
+    if (ppmObjM1 !== null) {
+      dispPpm.textContent = fmt(ppmObjM1, 0) + ' ppm';
+      rowPpm.style.display = 'flex';
+      manPpm.style.display = 'none';
+    } else {
+      rowPpm.style.display = 'none';
+      manPpm.style.display = 'block';
+    }
+
+    if (purezaM1 !== null) {
+      dispPur.textContent = fmt(purezaM1, 0) + ' %';
+      rowPur.style.display = 'flex';
+      manPur.style.display = 'none';
+    } else {
+      rowPur.style.display = 'none';
+      manPur.style.display = 'block';
+    }
+  }
+
+  function calcMod2() {
+    hideAlert('m2_alert');
+    document.getElementById('m2_ok_note').classList.remove('visible');
+
+    // Volumen solución
+    let volSol = volSolucionM1;
+    if (volSol === null) {
+      volSol = getVal('m2_vol_manual');
+      if (!volSol) {
+        showAlert('m2_alert', 'Ingrese el volumen de solución o calcule el Módulo 1 primero.');
+        return;
+      }
+    }
+
+    const alicuota  = getVal('m2_alicuota');
+    const agVol     = getVal('m2_agno3_vol');
+    const agN       = getVal('m2_agno3_n');
+    const ppmObj    = ppmObjM1  !== null ? ppmObjM1  : getVal('m2_ppm_obj');
+    const pureza    = purezaM1  !== null ? purezaM1  : getVal('m2_pureza');
+
+    if (!alicuota || !agVol || !agN || !ppmObj || !pureza) {
+      showAlert('m2_alert', 'Complete todos los campos con valores mayores a cero.');
+      return;
+    }
+    if (pureza > 100) {
+      showAlert('m2_alert', 'Pureza no puede superar 100%.');
+      return;
+    }
+
+    // ── Cálculo ──────────────────────────────────
+    const agVol_L    = agVol / 1000;            // L
+    const molesAg    = agN * agVol_L;           // mol Ag+
+    const molesCN     = 2 * molesAg;            // Ag+ + 2CN- -> Ag(CN)2- (Liebig)
+    const alicuota_L = alicuota / 1000;         // L
+
+    const concCN_mol = molesCN / alicuota_L;    // mol/L CN- en botella
+    const concCN_ppm = concCN_mol * 26 * 1000;  // mg/L = ppm
+
+    const deficit    = Math.max(0, ppmObj - concCN_ppm);
+
+    let grNaCNtec = 0;
+    let grCN_rep  = 0;
+    let grNaCN_rep = 0;
+
+    if (deficit > 0) {
+      const volSolL  = volSol / 1000;
+      grCN_rep       = (deficit * volSolL) / 1000;   // ppm = mg/L → g = ppm × L / 1000
+      grNaCN_rep     = grCN_rep * (49 / 26);        // g NaCN puro
+      grNaCNtec      = grNaCN_rep / (pureza / 100);
+    }
+
+    // ── Mostrar ──────────────────────────────────
+    document.getElementById('r2_actual').textContent   = fmt(concCN_ppm, 0);
+    document.getElementById('r2_deficit').textContent  = fmt(deficit, 0);
+    document.getElementById('r2_nacn').textContent     = fmt(grNaCNtec, 2);
+    document.getElementById('r2_pureza_tag').textContent = pureza;
+
+    if (deficit === 0) {
+      document.getElementById('r2_nacn').textContent = '0.00';
+      document.getElementById('m2_ok_note').classList.add('visible');
+    }
+
+    // ── Traza ────────────────────────────────────
+    const trace = document.getElementById('m2_trace');
+    trace.innerHTML = `
+      <span class="step"><strong>Paso 1 — Moles de CN⁻ en la alícuota (Ag⁺ + 2CN⁻ → Ag(CN)₂⁻)</strong></span>
+      <span class="step">mol Ag⁺ = ${agN} N × ${agVol_L.toFixed(5)} L = <strong>${molesAg.toExponential(3)} mol</strong></span>
+      <span class="step">mol CN⁻ = 2 × mol Ag⁺ = <strong>${molesCN.toExponential(3)} mol</strong></span>
+      <br>
+      <span class="step"><strong>Paso 2 — Concentración en botella</strong></span>
+      <span class="step">C = ${molesCN.toExponential(3)} mol ÷ ${alicuota_L.toFixed(5)} L = ${fmt(concCN_mol, 6)} mol/L</span>
+      <span class="step">En ppm: ${fmt(concCN_mol, 6)} × 26 g/mol × 1000 = <strong>${fmt(concCN_ppm, 1)} ppm CN⁻</strong></span>
+      <br>
+      <span class="step"><strong>Paso 3 — Déficit</strong></span>
+      <span class="step">${fmt(ppmObj, 0)} − ${fmt(concCN_ppm, 1)} = <strong>${fmt(deficit, 1)} ppm a reponer</strong></span>
+      ${deficit > 0 ? `
+      <br>
+      <span class="step"><strong>Paso 4 — CN⁻ a reponer</strong></span>
+      <span class="step">${fmt(deficit, 1)} ppm × ${(volSol/1000).toFixed(5)} L = <strong>${fmt(grCN_rep, 5)} g CN⁻</strong></span>
+      <br>
+      <span class="step"><strong>Paso 5 — Conversión a NaCN técnico</strong></span>
+      <span class="step">${fmt(grCN_rep, 5)} × (49/26) = ${fmt(grNaCN_rep, 5)} g NaCN puro</span>
+      <span class="step">${fmt(grNaCN_rep, 5)} ÷ ${(pureza/100).toFixed(2)} = <strong>${fmt(grNaCNtec, 3)} g NaCN técnico</strong></span>
+      ` : '<span class="step">Sin déficit — concentración suficiente.</span>'}
+    `;
+
+    document.getElementById('m2_result').classList.add('visible');
+  }
+
+  // ─── MÓDULO 3 — FLOTACIÓN ────────────────────────
+  const M3_BASE_G       = 200;   // g, base de referencia
+  const M3_BASE_H2O2    = 20;    // mL
+  const M3_BASE_NACN    = 10;    // g
+  const M3_BASE_LEACHW  = 4;     // g
+
+  function calcMod3() {
+    hideAlert('m3_alert');
+
+    const torta = getVal('m3_torta');
+
+    if (!torta) {
+      showAlert('m3_alert', 'Ingrese un peso de torta mayor a cero.');
+      return;
+    }
+
+    // ── Cálculo ──────────────────────────────────
+    const factor      = torta / M3_BASE_G;
+    const aguaBruta    = torta * 1;                    // 1:1, mismo peso en mL
+    const h2o2         = M3_BASE_H2O2   * factor;
+    const aguaNeta      = aguaBruta - h2o2;
+    const nacn          = M3_BASE_NACN  * factor;
+    const leachwell      = M3_BASE_LEACHW * factor;
+
+    // ── Mostrar resultados ───────────────────────
+    document.getElementById('r3_agua').textContent      = fmt(aguaNeta, 1);
+    document.getElementById('r3_h2o2').textContent       = fmt(h2o2, 1);
+    document.getElementById('r3_nacn').textContent       = fmt(nacn, 2);
+    document.getElementById('r3_leachwell').textContent  = fmt(leachwell, 2);
+
+    // ── Traza ────────────────────────────────────
+    const trace = document.getElementById('m3_trace');
+    trace.innerHTML = `
+      <span class="step"><strong>Paso 1 — Factor de escala</strong></span>
+      <span class="step">Factor = ${fmt(torta,1)} g ÷ 200 g = <strong>${fmt(factor,4)}</strong></span>
+      <br>
+      <span class="step"><strong>Paso 2 — Agua bruta (relación 1:1 con la torta)</strong></span>
+      <span class="step">Agua bruta = ${fmt(torta,1)} g × 1 = <strong>${fmt(aguaBruta,1)} mL</strong></span>
+      <br>
+      <span class="step"><strong>Paso 3 — H2O2</strong></span>
+      <span class="step">H2O2 = 20 mL × ${fmt(factor,4)} = <strong>${fmt(h2o2,2)} mL</strong></span>
+      <br>
+      <span class="step"><strong>Paso 4 — Agua neta a agregar</strong></span>
+      <span class="step">Agua neta = ${fmt(aguaBruta,1)} − ${fmt(h2o2,2)} = <strong>${fmt(aguaNeta,2)} mL</strong></span>
+      <br>
+      <span class="step"><strong>Paso 5 — NaCN</strong></span>
+      <span class="step">NaCN = 10 g × ${fmt(factor,4)} = <strong>${fmt(nacn,2)} g</strong></span>
+      <br>
+      <span class="step"><strong>Paso 6 — Leachwell</strong></span>
+      <span class="step">Leachwell = 4 g × ${fmt(factor,4)} = <strong>${fmt(leachwell,2)} g</strong></span>
+    `;
+
+    document.getElementById('m3_result').classList.add('visible');
+  }
+
+  // ─── MÓDULO 4 — FLOTACIÓN BULK COLA GRAVIMÉTRICA ──
+  const M4_BASE_G        = 2000;  // g, base de referencia (bitácora)
+  const M4_BASE_SOLIDOS  = 30;    // % sólidos fijo
+
+  const M4_R1_CUSO4      = 8;     // mL
+  const M4_R1_XANTATO    = 4;     // mL
+  const M4_R1_A404       = 5;     // gotas
+  const M4_R1_A65        = 8;     // gotas
+
+  const M4_R2_XANTATO    = 4;     // mL
+  const M4_R2_A404       = 5;     // gotas
+  const M4_R2_A65        = 4;     // gotas
+
+  const M4_SC_A65         = 4;    // gotas
+
+  function calcMod4() {
+    hideAlert('m4_alert');
+
+    const masa = getVal('m4_masa');
+
+    if (!masa) {
+      showAlert('m4_alert', 'Ingrese un peso de muestra mayor a cero.');
+      return;
+    }
+
+    // ── Cálculo ──────────────────────────────────
+    const factor = masa / M4_BASE_G;
+
+    const fracSolidos = M4_BASE_SOLIDOS / 100;
+    const pulpaTotal  = masa / fracSolidos;
+    const agua        = pulpaTotal - masa;
+
+    const r1_cuso4    = M4_R1_CUSO4   * factor;
+    const r1_xantato  = M4_R1_XANTATO * factor;
+    const r1_a404     = M4_R1_A404    * factor;
+    const r1_a65      = M4_R1_A65     * factor;
+
+    const r2_xantato  = M4_R2_XANTATO * factor;
+    const r2_a404     = M4_R2_A404    * factor;
+    const r2_a65      = M4_R2_A65     * factor;
+
+    const sc_a65       = M4_SC_A65    * factor;
+
+    // ── Mostrar resultados ───────────────────────
+    document.getElementById('r4_agua').textContent       = fmt(agua, 1);
+
+    document.getElementById('r4_r1_cuso4').textContent   = fmt(r1_cuso4, 2);
+    document.getElementById('r4_r1_xantato').textContent = fmt(r1_xantato, 2);
+    document.getElementById('r4_r1_a404').textContent    = fmt(r1_a404, 1);
+    document.getElementById('r4_r1_a65').textContent     = fmt(r1_a65, 1);
+
+    document.getElementById('r4_r2_xantato').textContent = fmt(r2_xantato, 2);
+    document.getElementById('r4_r2_a404').textContent    = fmt(r2_a404, 1);
+    document.getElementById('r4_r2_a65').textContent     = fmt(r2_a65, 1);
+
+    document.getElementById('r4_sc_a65').textContent      = fmt(sc_a65, 1);
+
+    // ── Traza ────────────────────────────────────
+    const trace = document.getElementById('m4_trace');
+    trace.innerHTML = `
+      <span class="step"><strong>Paso 1 — Factor de escala</strong></span>
+      <span class="step">Factor = ${fmt(masa,1)} g ÷ 2000 g = <strong>${fmt(factor,4)}</strong></span>
+      <br>
+      <span class="step"><strong>Paso 2 — Agua (30% sólidos)</strong></span>
+      <span class="step">Pulpa total = ${fmt(masa,1)} g ÷ 0.15 = ${fmt(pulpaTotal,1)} g</span>
+      <span class="step">Agua = ${fmt(pulpaTotal,1)} − ${fmt(masa,1)} = <strong>${fmt(agua,1)} mL</strong></span>
+      <br>
+      <span class="step"><strong>Paso 3 — Rougher 1</strong></span>
+      <span class="step">CuSO4 = 8 mL × ${fmt(factor,4)} = <strong>${fmt(r1_cuso4,2)} mL</strong></span>
+      <span class="step">Xantato = 4 mL × ${fmt(factor,4)} = <strong>${fmt(r1_xantato,2)} mL</strong></span>
+      <span class="step">A-404 = 5 gotas × ${fmt(factor,4)} = <strong>${fmt(r1_a404,1)} gotas</strong></span>
+      <span class="step">A-65 = 8 gotas × ${fmt(factor,4)} = <strong>${fmt(r1_a65,1)} gotas</strong></span>
+      <br>
+      <span class="step"><strong>Paso 4 — Rougher 2</strong></span>
+      <span class="step">Xantato = 4 mL × ${fmt(factor,4)} = <strong>${fmt(r2_xantato,2)} mL</strong></span>
+      <span class="step">A-404 = 5 gotas × ${fmt(factor,4)} = <strong>${fmt(r2_a404,1)} gotas</strong></span>
+      <span class="step">A-65 = 4 gotas × ${fmt(factor,4)} = <strong>${fmt(r2_a65,1)} gotas</strong></span>
+      <br>
+      <span class="step"><strong>Paso 5 — Scavenger 1</strong></span>
+      <span class="step">A-65 = 4 gotas × ${fmt(factor,4)} = <strong>${fmt(sc_a65,1)} gotas</strong></span>
+    `;
+
+    document.getElementById('m4_result').classList.add('visible');
+  }
+
+  // ─── TABS ────────────────────────────────────────
+  function switchTab(tab) {
+    const pageLix  = document.getElementById('pageLix');
+    const pageFlot = document.getElementById('pageFlot');
+    const btnLix   = document.getElementById('tabBtnLix');
+    const btnFlot  = document.getElementById('tabBtnFlot');
+
+    if (tab === 'lix') {
+      pageLix.classList.add('active');
+      pageFlot.classList.remove('active');
+      btnLix.classList.add('active');
+      btnFlot.classList.remove('active');
+    } else {
+      pageFlot.classList.add('active');
+      pageLix.classList.remove('active');
+      btnFlot.classList.add('active');
+      btnLix.classList.remove('active');
+    }
+  }
+
+  // Init
+  updateM2Inherited();
+</script>
+</body>
+</html>
